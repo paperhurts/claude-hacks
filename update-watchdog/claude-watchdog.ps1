@@ -40,7 +40,10 @@ param(
   [int]$GraceMinutes = 3,
   [int]$CooldownMinutes = 15,
   [datetime]$Now = (Get-Date),
-  [string]$StateDir = (Join-Path $env:LOCALAPPDATA 'claude-hacks')
+  # Not %LOCALAPPDATA%: inside Claude Desktop (an MSIX package), writes there are
+  # silently redirected to Packages\Claude_*\LocalCache, where Task Scheduler
+  # can't see them. The profile root isn't redirected.
+  [string]$StateDir = (Join-Path $env:USERPROFILE '.claude-hacks')
 )
 
 $ErrorActionPreference = 'Stop'

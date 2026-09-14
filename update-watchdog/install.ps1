@@ -3,7 +3,7 @@
   Installs the Claude Desktop update watchdog as a per-user scheduled task.
 
 .DESCRIPTION
-  Copies claude-watchdog.ps1 to %LOCALAPPDATA%\claude-hacks and registers
+  Copies claude-watchdog.ps1 to %USERPROFILE%\.claude-hacks and registers
   "\claude-hacks\Claude Update Watchdog" for the current user:
     - runs at logon and every IntervalMinutes after, only while you're logged on
     - no elevation (RunLevel Limited)
@@ -19,7 +19,12 @@ param([int]$IntervalMinutes = 5)
 $ErrorActionPreference = 'Stop'
 $taskName = 'Claude Update Watchdog'
 $taskPath = '\claude-hacks\'
-$dest = Join-Path $env:LOCALAPPDATA 'claude-hacks'
+# Deliberately NOT %LOCALAPPDATA%. Run this from a terminal inside Claude
+# Desktop (an MSIX package) and writes to AppData\Local are silently redirected
+# to AppData\Local\Packages\Claude_*\LocalCache\Local. The task would then point
+# at a file that doesn't exist on the real disk: Task Scheduler reports 0x0 and
+# nothing runs. The profile root isn't redirected.
+$dest = Join-Path $env:USERPROFILE '.claude-hacks'
 $user = "$env:USERDOMAIN\$env:USERNAME"
 
 New-Item -ItemType Directory -Force -Path $dest | Out-Null
