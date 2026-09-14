@@ -70,14 +70,23 @@ minutes instead of after a reboot.
 powershell -ExecutionPolicy Bypass -File .\update-watchdog\install.ps1
 ```
 
-This copies the script to `%LOCALAPPDATA%\claude-hacks\` and registers
+This copies the script to `%USERPROFILE%\.claude-hacks\` and registers
 `\claude-hacks\Claude Update Watchdog` in Task Scheduler, where you can see it.
+
+> **Why not `%LOCALAPPDATA%`?** Claude Desktop is an MSIX package, and Windows
+> silently redirects packaged apps' writes to `AppData\Local` into
+> `AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Local\`. That includes
+> anything run from a terminal *inside* Claude, such as Claude Code. Install
+> there from inside Claude and the file only exists in Claude's private view.
+> Task Scheduler runs outside it, can't find the script, and still reports
+> success. The profile root isn't redirected. (`main.log` itself is a real file
+> at `AppData\Local\Claude\Logs`, so reading it from outside works.)
 
 ## Check on it
 
-- `%LOCALAPPDATA%\claude-hacks\watchdog.last-run.txt` holds the last decision
+- `%USERPROFILE%\.claude-hacks\watchdog.last-run.txt` holds the last decision
   (`healthy`, `waiting`, `cooldown`, `recovered`). It's overwritten each run.
-- `%LOCALAPPDATA%\claude-hacks\watchdog.log` is only written when the watchdog
+- `%USERPROFILE%\.claude-hacks\watchdog.log` is only written when the watchdog
   actually relaunches the app, and is capped at 500 lines.
 - To see what it *would* do right now without changing anything:
   ```powershell
@@ -90,7 +99,7 @@ This copies the script to `%LOCALAPPDATA%\claude-hacks\` and registers
 powershell -ExecutionPolicy Bypass -File .\update-watchdog\uninstall.ps1
 ```
 
-Removes the task and `%LOCALAPPDATA%\claude-hacks\`.
+Removes the task and `%USERPROFILE%\.claude-hacks\`.
 
 ## Tests
 
