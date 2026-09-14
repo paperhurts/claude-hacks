@@ -95,3 +95,9 @@ current build.
 Same root behavior. The AHK and PowerShell fixes don't apply. Mission Control
 Spaces works the same way as Windows virtual desktops — put Claude in its own
 Space and it stops covering the others.
+
+## Also in this repo
+
+- [`update-watchdog/`](update-watchdog/): Claude Desktop quits itself for a silent
+  auto-update and never comes back (Windows). A scheduled task relaunches it in
+  only that case, and sends the window to the back so it doesn't cover your screen.
